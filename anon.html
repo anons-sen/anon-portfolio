@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Color Me｜カラーパレット診断</title>
+  <link href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background: linear-gradient(to bottom right, #f0f8ff, #fef6ff);
+      font-family: 'Noto Sans JP', sans-serif;
+    }
+    h1 {
+      color: white;
+      text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.4);
+      text-align: center;
+    }
+    .glass-box {
+      background: rgba(255, 255, 255, 0.75);
+      border-radius: 1rem;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+    .swatch-row {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+    .swatch {
+      flex: 1;
+      min-width: 100px;
+      height: 60px;
+      border-radius: 0.5rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 0.75rem;
+      font-weight: bold;
+      color: white;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.6);
+    }
+    .button-center {
+      display: flex;
+      justify-content: center;
+      margin: 2rem 0;
+    }
+    #resultBox {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+<main class="container">
+
+  <section class="glass-box">
+    <h1>Color Me</h1>
+    <p>
+      あなた自身のカラーパレットを見つける診断サイトです。<br><br>
+      ・キャラクターの配色<br>
+      ・ファッション創作活動<br>
+      etc<br><br>
+      自分だけの配色イメージを発見してみましょう。
+    </p>
+  </section>
+
+  <section class="glass-box">
+    <h2>サンプルカラーパレット</h2>
+    <div class="button-center">
+      <a href="https://designergpt.replit.app/pages/bd4ab8b4dc1f24fff31711cb8dde3a08.html" target="_blank" role="button">サンプルパレットを開く</a>
+    </div>
+  </section>
+
+  <section class="glass-box">
+    <h2>カラーパレット診断</h2>
+    <div class="button-center">
+      <button onclick="startDiagnosis()">診断をはじめる</button>
+    </div>
+
+    <form id="diagnosisForm" style="display:none" onsubmit="showResult(event)">
+      <label>1. 今日の気分は？<input type="text" name="q1" required></label>
+      <label>2. 好きな季節は？<select name="q2"><option>春</option><option>夏</option><option>秋</option><option>冬</option></select></label>
+      <label>3. 誕生日（月）<select name="q3">
+        <option>1月</option><option>2月</option><option>3月</option><option>4月</option>
+        <option>5月</option><option>6月</option><option>7月</option><option>8月</option>
+        <option>9月</option><option>10月</option><option>11月</option><option>12月</option>
+      </select></label>
+      <label>4. 最近気になる色<input type="text" name="q4"></label>
+      <label>5. よく選ぶ服の色<input type="text" name="q5"></label>
+      <label>6. 気になる言葉<input type="text" name="q6"></label>
+      <label>7. 落ち着く空間のイメージ<input type="text" name="q7"></label>
+      <label>8. 好きなアートの色合い<input type="text" name="q8"></label>
+      <label>9. リラックスできる色<input type="text" name="q9"></label>
+      <label>10. 幼少期の思い出の色<input type="text" name="q10"></label>
+      <label>11. 周囲に与えたい印象<input type="text" name="q11"></label>
+      <label>12. 今求めている感情<input type="text" name="q12"></label>
+      <label>13. 嫌いな色<input type="text" name="q13"></label>
+      <label>14. 元気が出る色<input type="text" name="q14"></label>
+      <label>15. 気になるアクセサリーの色<input type="text" name="q15"></label>
+      <div class="button-center">
+        <button type="submit">診断する</button>
+      </div>
+    </form>
+  </section>
+
+  <section class="glass-box" id="resultBox">
+    <h2>診断結果</h2>
+    <p>あなたにおすすめのカラーパレットはこちら：</p>
+    <div id="paletteOutput"></div>
+    <p id="adviceText"></p>
+  </section>
+
+</main>
+
+<script>
+  function startDiagnosis() {
+    document.getElementById('diagnosisForm').style.display = 'block';
+  }
+
+  function showResult(e) {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const answers = [...formData.values()];
+    const paletteOutput = document.getElementById('paletteOutput');
+    const adviceText = document.getElementById('adviceText');
+    let palette = [], advice = '';
+
+    if (answers.includes('春')) {
+      palette = ['#FFDDE1', '#A9DEF9', '#E4C1F9', '#FBE7C6', '#D0F4DE'];
+      advice = '柔らかく優しい印象。穏やかで親しみやすい配色です。';
+    } else if (answers.includes('夏')) {
+      palette = ['#95E1D3', '#FCE38A', '#F38181', '#EAFFD0', '#FFF5E1'];
+      advice = '軽やかで開放的なイメージ。明るくポジティブな気分に。';
+    } else if (answers.includes('秋')) {
+      palette = ['#B08968', '#E6CCB2', '#D4A373', '#F5F1ED', '#A98467'];
+      advice = '落ち着いたトーンで安心感と知性を演出。';
+    } else if (answers.includes('冬')) {
+      palette = ['#1C1C1C', '#585858', '#A9A9A9', '#D3D3D3', '#F5F5F5'];
+      advice = '洗練されたクールな雰囲気。都会的で大人っぽい印象。';
+    } else {
+      palette = ['#FFB5A7', '#FCD5CE', '#D8E2DC', '#A2D2FF', '#BDE0FE'];
+      advice = 'バランスの取れた配色。日常使いにもぴったり。';
+    }
+
+    paletteOutput.innerHTML = `
+      <div class='swatch-row'>
+        <div class='swatch' style='background-color:${palette[0]}'>${palette[0]}</div>
+        <div class='swatch' style='background-color:${palette[1]}'>${palette[1]}</div>
+      </div>
+      <div class='swatch-row'>
+        <div class='swatch' style='background-color:${palette[2]}'>${palette[2]}</div>
+        <div class='swatch' style='background-color:${palette[3]}'>${palette[3]}</div>
+        <div class='swatch' style='background-color:${palette[4]}'>${palette[4]}</div>
+      </div>`;
+    
+    adviceText.textContent = 'アドバイス：' + advice;
+    document.getElementById('resultBox').style.display = 'block';
+  }
+</script>
+</body>
+</html>
